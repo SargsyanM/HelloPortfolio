@@ -23,11 +23,11 @@ function main(){
 }
 
 function setupWorld() {
-	drawAxes();
+	// drawAxes();
 	
-	addSphere({x:0, y: 100, vx: 0, vy: -1, ay:-0.1})
+	// addSphere({x:0, y: 100, vx: 0, vy: 0, ay:0, vx: 1})
 
-	// loadPlanets()
+	loadPlanets()
 }
 
 
@@ -36,13 +36,21 @@ function loadPlanets(){
 	// to turn degrees to radian: alpha * Math.PI / 180
 //------------------- BEGIN YOUR CODE
 
-
+	for(var key in planets)
+		addSphere({
+			x: planets[key].distance , 
+			y: Math.tan(Math.PI / 180 * planets[key].tilt) * planets[key].distance, 
+			vy: 0, 
+			ay:0, 
+			vz: planets[key].velocity, 
+			name: key
+		})
 
 //------------------- END YOUR CODE
-	// scene.add(spotlight);
-	// scene.remove(light);
-	// scene.remove(ambientLight);
-	// scene.remove(background);
+	scene.add(spotlight);
+	scene.remove(light);
+	scene.remove(ambientLight);
+	scene.remove(background);
 }
 
 /*
@@ -108,10 +116,10 @@ function updateScene(){
 }
 
 function addTrail(pos){
-	// var meshTmp = new THREE.Mesh(geos.trail, mats.trail);
-	// meshTmp.position.set(pos.x, pos.y, pos.z)
-	// scene.add(meshTmp)
-	// trailCount++;
+	var meshTmp = new THREE.Mesh(geos.trail, mats.trail);
+	meshTmp.position.set(pos.x, pos.y, pos.z)
+	scene.add(meshTmp)
+	trailCount++;
 }
 
 
@@ -122,11 +130,35 @@ function addTrail(pos){
 function getAcceleration(obj) {
 	// simulate the gravity force between the object and the origin(sun)
 	// dont forget to multiply by the gravityConst
-	return obj.a
+// //------------------- BEGIN YOUR CODE
+
+	with(obj.pos) {
+
+		var r = Math.sqrt(x**2+y**2+z**2);
+
+		return {	
+			x: - gravityConst * x / r**2,
+			y: - gravityConst * y / r**2,
+			z: - gravityConst * z / r**2,
+		}
+	}
+
+//------------------- END YOUR CODE	
 }
 
 function getVelocity(obj) {
-	return obj.v;
+//------------------- BEGIN YOUR CODE
+
+	a = getAcceleration(obj);
+	obj.a = a;
+
+	var newX = obj.v.x + a.x;
+	var newY = obj.v.y + a.y;	
+	var newZ = obj.v.z + a.z;	
+	return {x : newX, y : newY, z : newZ}
+
+//------------------- END YOUR CODE	
+
 }
 
 function getPosition(obj) {
@@ -139,4 +171,3 @@ function getPosition(obj) {
 	
 	return {x : newX, y : newY, z : newZ}
 }
-
