@@ -48,7 +48,7 @@ var planets = {
       "velocity" : 0.71
     },
     "sun" :{
-      "radius" : 50,
+      "radius" : 12,
       "distance" : 0,
       "tilt" : 0,
       "velocity" : 0
